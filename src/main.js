@@ -46,8 +46,11 @@ const ctx4 = document.getElementById('daily-chart4');
 const todayDateElement = document.querySelector("#today")
 const monthList = ["2021-01","2021-02","2021-03","2021-04"]
 let salesHist
-let salesGroupeByMonth = []
-let monthlyFigure = []
+let transactionsGroupedByMonth = []
+let costSoldGroupedByMonth = []
+let monthlySalesFigure = []
+let monthlyCOGSFigure = []
+let monthlyGrossProfitFigure = []
 
 window.onload = () => {
     let today =  new Date()
@@ -69,24 +72,32 @@ API.getSales().then(sales => monthlyBreakDown(sales))
 
 const monthlyBreakDown = (sales) => {
     salesHist = sales
-    monthList.forEach(sale => {
-        let monthSales = sales.filter((item, index) => {
-            if(item.date1.indexOf(sale) >= 0) return true;
+    /// トランゼクションを月単位に分ける \\\
+    monthList.forEach(transactionDate => {
+        let monthlySalesTransactions = sales.filter((item, index) => {
+            if(item.date1.indexOf(transactionDate) >= 0) return true;
         })
-        salesGroupeByMonth.push(monthSales)
-        console.log(salesGroupeByMonth)
+        transactionsGroupedByMonth.push(monthlySalesTransactions)
+        console.log(transactionsGroupedByMonth)
     });
-    // 売り上げの計算
-    calcMonthlySalesVolume(salesGroupeByMonth)
-    dailyChart3(monthlyFigure)
-
+    /// 売り上げ及び原価計算 \\\
+    calcMonthlySalesVolumeAndCOGS(transactionsGroupedByMonth)
+    /// 粗利　GrossProfit計算 \\\
+    calcMonthlyGrossProfit(monthlySalesFigure, monthlyCOGSFigure)
+    /// グラフ \\\
+    dailyChart3(monthlySalesFigure)
+    dailyChart4(monthlyGrossProfitFigure)
 }
 
-///売り上げ計算開始\\\
-const calcMonthlySalesVolume = (salesGroupeByMonth) => {
-    for (const month of salesGroupeByMonth){sumAllTransactionValue(month)}
+/// 売り上げ及び原価計算開始 \\\
+const calcMonthlySalesVolumeAndCOGS = (transactionsGroupedByMonth) => {
+    // 売り上げ
+    for (const month of transactionsGroupedByMonth){sumAllTransactionValue(month)}
+    // 原価
+    for (const month of transactionsGroupedByMonth){sumAllTransactionCost(month)}
 }
 
+/// 売り上げ計算開始 \\\
 const sumAllTransactionValue = (month) => {
     console.log(month)
     let sum = 0
@@ -94,24 +105,40 @@ const sumAllTransactionValue = (month) => {
         console.log(month[i].valuesold)
         sum += month[i].valuesold
     }
-    monthlyFigure.push(sum)
+    monthlySalesFigure.push(sum)
 }
-///売り上げ計算終了\\\
+
+/// 原価計算開始 \\\
+const sumAllTransactionCost = (month) => {
+    console.log(month)
+    let sum = 0
+    for (let i = 0; i < month.length; i++) {
+        console.log(month[i].costsold)
+        sum += month[i].costsold
+    }
+    monthlyCOGSFigure.push(sum)
+}
+
+const calcMonthlyGrossProfit = (monthlySalesFigure, monthlyCOGSFigure) => {
+    
+    for (let i = 0; i < monthlySalesFigure.length; i++) {
+        let gross = monthlySalesFigure[i] - monthlyCOGSFigure[i]
+        monthlyGrossProfitFigure.push(gross)
+    }
+}
+
+console.log(monthlySalesFigure)
+console.log(monthlyCOGSFigure)
 
 
-
-
-console.log(monthlyFigure)
-
-
-const dailyChart3 = (monthlyFigure) => {
+const dailyChart3 = (monthlySalesFigure) => {
     new Chart(ctx3, {
         type: 'bar',
         data: {
             labels: monthList,
             datasets: [{
                 label: 'Monthly Revenue',
-                data: monthlyFigure,
+                data: monthlySalesFigure,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -134,14 +161,14 @@ const dailyChart3 = (monthlyFigure) => {
     })
 }
 
-const dailyChart4 = (monthlyFigure) => {
+const dailyChart4 = (monthlyGrossProfitFigure) => {
     new Chart(ctx4, {
         type: 'bar',
         data: {
             labels: monthList,
             datasets: [{
-                label: 'Monthly Sales',
-                data: monthlyFigure,
+                label: 'Monthly Gross Profit',
+                data: monthlyGrossProfitFigure,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -163,5 +190,3 @@ const dailyChart4 = (monthlyFigure) => {
         }
     })
 }
-
-// dailyChart3(monthlyFigure)
