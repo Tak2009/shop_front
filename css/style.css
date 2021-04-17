@@ -53,14 +53,19 @@ body {
 } */
 
 .div-chart {
-    width: 50%;
+    width: 40%;
     margin-top: 5%;
     margin-bottom: 5%;
     margin-left: 5%;
 }
 
-#myChart,
-#myChart2 {
+h2 {
+  width: 40%;
+  margin-left: 5%;
+}
+
+#daily-chart,
+#daily-chart2 {
     width: 100%;
     height: 100%;
 }
@@ -96,67 +101,72 @@ body {
     background-color: #167F92;
     color:#fff;
   }
+
   table tbody th {
       background: #78bbc7;
       color: #fff;
   }
+
   .txt{
      text-align: left;
      font-size: .85em;
   }
+
   .price{
     text-align: right;
     color: #167F92;
     font-weight: bold;
   }
+
   .non{
     background:#fff
   }
+
   @media screen and (max-width: 600px) {
-    table {
-      border: 0;
-      width:100%
+      table {
+        border: 0;
+        width:100%
+      }
+      table th{
+        background-color: #167F92;
+        display: block;
+        border-right: none;
+      }
+      table thead {
+        border: none;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+      }
+      table tr {
+        display: block;
+        margin-bottom: .625em;
+      }
+      table td {
+        border-bottom: 1px solid #bbb;
+        display: block;
+        font-size: .8em;
+        text-align: right;
+        position: relative;
+        padding: .625em .625em .625em 4em;
+        border-right: none;
+      }
+      
+      table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        position: absolute;
+        left: 10px;
+        color: #167F92;
+      }
+      table td:last-child {
+        border-bottom: 0;
+      }
+      table tbody th {
+        color: #fff;
     }
-    table th{
-      background-color: #167F92;
-      display: block;
-      border-right: none;
-    }
-    table thead {
-      border: none;
-      clip: rect(0 0 0 0);
-      height: 1px;
-      margin: -1px;
-      overflow: hidden;
-      padding: 0;
-      position: absolute;
-      width: 1px;
-    }
-    table tr {
-      display: block;
-      margin-bottom: .625em;
-    }
-    table td {
-      border-bottom: 1px solid #bbb;
-      display: block;
-      font-size: .8em;
-      text-align: right;
-      position: relative;
-      padding: .625em .625em .625em 4em;
-      border-right: none;
-    }
-    
-    table td::before {
-      content: attr(data-label);
-      font-weight: bold;
-      position: absolute;
-      left: 10px;
-      color: #167F92;
-    }
-    table td:last-child {
-      border-bottom: 0;
-    }
-    table tbody th {
-      color: #fff;
-  }
   }
