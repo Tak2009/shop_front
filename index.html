@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html lang=”ja”>
+　<head>
+    <meta charset=”UTF-8″>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.2/chart.min.js"></script>
+　  <title>charts</title>
+　</head>
+    <body>
+        <header>
+            <nav>
+                <div class="row">
+                    <ul class="main-nav">
+                        <li><a href="#features">Food delivery</a></li>
+                        <li><a href="#works">How it works</a></li>
+                        <li><a href="#cities">Our cities</a></li>
+                        <li><a href="#plans">Sign up</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <section>
+            <div class="div-chart">
+                <h3>Daily1</h3>
+                <canvas id="daily-chart1"></canvas>
+            </div>
+        </section>
+
+        <section>
+            <div class="div-chart">
+                <h3>Daily2</h3>
+                <canvas id="myChart2"></canvas>
+            </div>
+        </section>
+        
+        <section>
+            <div class="div-chart">
+                <h3>Chart1</h3>
+                <canvas id="myChart1"></canvas>
+            </div>
+        </section>
+
+        <section>
+            <div class="div-chart">
+                <h3>Grid1</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <td class="non"></td>
+                            <th scope="col">内容</th>
+                            <th scope="col">価格(月額)</th>
+                            <th scope="col">価格(月額)</th>
+                            <th scope="col">価格(月額)</th>
+                            <th scope="col">価格(月額)</th>
+                            <th scope="col">価格(月額)</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>ベーシックプラン</th>
+                            <td data-label="内容" class="txt">はじめての方向け。ベーシックなお試しプラン</td>
+                            <td data-label="価格" class="price">¥3,000</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                        </tr>
+                        <tr>
+                            <th>カスタムプラン</th>
+                            <td data-label="内容" class="txt">必要なものだけ揃えられるカスタムプラン</td>
+                            <td data-label="価格"class="price">¥4,000</td>
+                            <td data-label="価格"class="price">¥5,000</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                        </tr>
+                        <tr>
+                            <th>プレミアムプラン</th>
+                            <td data-label="内容" class="txt">全ておまかせのプレミアムプラン</td>
+                            <td data-label="価格"class="price">¥10,000</td>
+                            <td data-label="価格"class="price">¥15,000</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                        </tr>
+                        <tr>
+                            <th>プレミアムプラン</th>
+                            <td data-label="内容" class="txt">全ておまかせのブラックプラン</td>
+                            <td data-label="価格"class="price">¥14,000</td>
+                            <td data-label="価格"class="price">¥25,000</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                            <td data-label="価格" class="price">¥4,500</td>
+                        </tr>
+                    </tbody>
+                </table>   
+            </div>
+        </section>
+    
+        <section>
+            <div class="div-chart">
+                <h3>Summury</h3>
+                <p>TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT</p>
+            </div>
+        </section>
+
+    <script src='src/data.js' defer></script>
+    <script src='src/main.js' defer></script>
+    <script src='src/charts.js' defer></script>
+    </body>
+</html>
