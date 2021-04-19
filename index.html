@@ -13,10 +13,10 @@
             <nav>
                 <div class="row">
                     <ul class="main-nav">
-                        <li><a href="#features">Food delivery</a></li>
-                        <li><a href="#works">How it works</a></li>
-                        <li><a href="#cities">Our cities</a></li>
-                        <li><a href="#plans">Sign up</a></li>
+                        <li><a href="#chart-1">Daily1</a></li>
+                        <li><a href="#chart-2">Daily2</a></li>
+                        <li><a href="#cities">Daily3</a></li>
+                        <li><a href="#plans">Daily4</a></li>
                     </ul>
                 </div>
             </nav>
@@ -24,20 +24,66 @@
         
         <h2 id="today">Today:</h2>
 
-        <section>
-            <div class="div-chart">
-                <h3>Daily1</h3>
-                <canvas id="daily-chart1"></canvas>
-            </div>
-        </section>
+            <section>
+                <div class="div-form">
+                    <form id="new_form">
+                        <ul>
+                            <li>
+                                <label>Select Transaction Type: <select id="trans-selection"></label>
+                                <option value="sale">Sold</option>
+                                <option value="purchase">Purchased</option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>Select Product Type: <select id="type-selection"></label>
+                                    <option value="1">A</option>
+                                    <option value="2">B</option>
+                                    <option value="3">C</option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>Select Date: </label>
+                                    <select name="year" id="id-year">
+                                    </select>
+                                    <select name="month" id="id-month">
+                                    </select>
+                                    <select name="day" id="id-day">
+                                    </select>
+                            </li>
+                            <li>
+                                <input id="create-trans" type="text" name="qty" placeholder="Quantity Sold/Bought"/>
+                                <input type="submit" value="Submit"/>
+                            </li>
+                        </ul>
+                    </form>
+                </div>
+            </section>
 
-        <section>
-            <div class="div-chart">
-                <h3>Daily2</h3>
-                <canvas id="daily-chart2"></canvas>
-            </div>
-        </section>
-        
+            <section>
+                <div class="div-chart">
+                    <h3>Simulated Transactions</h3>
+                    <div>
+                        <ul id="list">
+                        </ul>
+                    </div>
+            </section>
+
+        <!-- <div class="div-flex"> -->
+            <section id="chart-1">
+                <div class="div-chart">
+                    <h3>Cash Balance Simulator</h3>
+                    <canvas id="daily-chart1"></canvas>
+                </div>
+            </section>
+
+            <section id="chart-2">
+                <div class="div-chart">
+                    <h3>Inventory Simulator</h3>
+                    <canvas id="daily-chart2"></canvas>
+                </div>
+            </section>
+        <!-- </div> -->
+
         <section>
             <div class="div-chart">
                 <h3>Monthly Sales</h3>
@@ -47,7 +93,7 @@
 
         <section>
             <div class="div-chart">
-                <h3>Monthly Sales</h3>
+                <h3>Monthly Gross Profit</h3>
                 <canvas id="daily-chart4"></canvas>
             </div>
         </section>

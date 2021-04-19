@@ -1,40 +1,8 @@
-const masterData = {
-    "12-2020-Date":
-    [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
-    "12-2020-Value":
-    [1,2,3,4,5,6,7,8,9,10,11,12,1,3,4,5,6,7,8,8,9,7,8,4,5,6,7,8,4,6,7],
-    "1-2021-Date":
-    [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
-    "1-2021-Value":
-    [3,2,3,6,5,6,7,8,9,10,11,1,1,1,4,5,6,8,5,9,7,8,9,4,5,6,10,10,15,8,7],
-    "2-2021-Date":
-    [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],
-    "2-2021-Value":
-    [2,3,6,5,6,7,8,9,10,11,1,1,1,4,5,6,8,8,8,9,7,8,9,4,5,6,10,10],
-    "3-2021-Date":
-    [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
-    "3-2021-Value":
-    [2,3,2,2,1,1,2,4,2,6,1,1,1,4,5,6,2,4,5,9,7,8,3,4,5,6,1,10,1,1,3],
-    "4-2021-Date":
-    [1,2,3,4,5,6,7,8,9,10,11,12,13],
-    "4-2021-Value":
-    [7,1,1,4,5,5,6,7,8,9,3]
-}
-
-let dt = new Date()
-
-// past month test
-dt = new Date(dt.getFullYear(), dt.getMonth(), 0);
-dtFuture = new Date(dt.getFullYear(), dt.getMonth() + 2, 0);
-
-let day = dt.getDate() -2
-let month = dt.getMonth() + 1
-let year = dt.getFullYear()
-let thresholdTop = 10
-
-
-//////////////////////////////////////////////////////////////////////////////////////
 const SALES_URL = "http://localhost:3000/sales";
+const SALESSIM_URL = "http://localhost:3000/salessimulations";
+const BICYCLE_URL = "http://localhost:3000/bicycles";
+const CASH_URL = "http://localhost:3000/cashes";
+
 // const PORTFOLIOS_URL = "http://localhost:3000/portfolios"
 // const PORT_HIST_URL = "http://localhost:3000/port_histories"
 
@@ -44,27 +12,37 @@ const getSales = () => {
     .then(resp => resp.json())
 };
 
+const getBicycle = () => {
+    return fetch(BICYCLE_URL)
+    .then(resp => resp.json())
+};
 
-// const getPortfolios = () => {
-//     return fetch(PORTFOLIOS_URL)
-//     .then(resp => resp.json())
-// };
+const getCash = () => {
+    return fetch(CASH_URL)
+    .then(resp => resp.json())
+};
 
-// const getHist = () => {
-//     return fetch(PORT_HIST_URL)
-//     .then(resp => resp.json())
-// };
+const getSalesSims = () => {
+    return fetch(SALESSIM_URL)
+    .then(resp => resp.json())
+};
 
-// const createNewAcc = (newAcc) => {
-//     return fetch(PORTFOLIOS_URL, {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "Accept": "application/json"
-//         },
-//         body: JSON.stringify(newAcc)
-//     }).then(resp => resp.json())
-// };
+const getSims = (url) => {
+    return fetch(url)
+    .then(resp => resp.json())
+};
+
+const createNewTrans = (newTrans) => {
+    return fetch(SALESSIM_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(newTrans)
+    // })
+    }).then(resp => resp.json())
+};
 
 // // const patchAcc = (acc, id) => {
 // //     return fetch(`${PORTFOLIOS_URL}/${id}`, {
@@ -77,16 +55,16 @@ const getSales = () => {
 // //     })
 // // };
 
-// const deletePort = (id) => {
-//     return fetch(`${PORTFOLIOS_URL}/${id}`,{
-//         method: "DELETE",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "Accept": "application/json"
-//         },
-//         body: JSON.stringify()
-//     })
-// };
+const deleteSimTrans = (id) => {
+    return fetch(`${SALESSIM_URL}/${id}`,{
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify()
+    })
+};
 
 
 // const patchFxRate = (id, obj) =>{
@@ -111,7 +89,7 @@ const getSales = () => {
 //     })
 // };
 
-API = {getSales};
+API = {getSales, getBicycle, createNewTrans, deleteSimTrans, getSalesSims, getSims, getCash};
 
 // //test start\\\
 // const dummyData = {
