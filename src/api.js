@@ -1,11 +1,7 @@
-const SALES_URL = "http://localhost:3000/sales";
-const SALESSIM_URL = "http://localhost:3000/salessimulations";
-const BICYCLE_URL = "http://localhost:3000/bicycles";
-const CASH_URL = "http://localhost:3000/cashes";
-
-// const PORTFOLIOS_URL = "http://localhost:3000/portfolios"
-// const PORT_HIST_URL = "http://localhost:3000/port_histories"
-
+const SALES_URL = "https://shop-biz-backend.herokuapp.com/sales";
+const SALESSIM_URL = "https://shop-biz-backend.herokuapp.com/salessimulations";
+const BICYCLE_URL = "https://shop-biz-backend.herokuapp.com/bicycles";
+const CASH_URL = "https://shop-biz-backend.herokuapp.com/cashes";
 
 const getSales = () => {
     return fetch(SALES_URL)
