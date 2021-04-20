@@ -36,8 +36,8 @@ const createNewTrans = (newTrans) => {
             "Accept": "application/json"
         },
         body: JSON.stringify(newTrans)
-    // })
-    }).then(resp => resp.json())
+    })
+    // }).then(resp => resp.json())
 };
 
 // // const patchAcc = (acc, id) => {
@@ -63,35 +63,4 @@ const deleteSimTrans = (id) => {
 };
 
 
-// const patchFxRate = (id, obj) =>{
-//     return fetch(`${FX_RATES_URL}/${id}`, {
-//         method: "PATCH",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "Accpet": "application/json"
-//         },
-//         body: JSON.stringify(obj)
-//     })
-// }
-
-// const createNewHist = (newHist) => {
-//     return fetch(PORT_HIST_URL, {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "Accept": "application/json"
-//         },
-//         body: JSON.stringify(newHist)
-//     })
-// };
-
 API = {getSales, getBicycle, createNewTrans, deleteSimTrans, getSalesSims, getSims, getCash};
-
-// //test start\\\
-// const dummyData = {
-//     id: 5,
-//     rate: 1.3 //from 1.2985
-// } 
-
-// API.patchFxRate(5, dummyData);
-// //test end\\

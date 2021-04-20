@@ -3,7 +3,6 @@ const ctx1 = document.getElementById('daily-chart1');
 const ctx2 = document.getElementById('daily-chart2');
 const ctx3 = document.getElementById('daily-chart3');
 const ctx4 = document.getElementById('daily-chart4');
-console.log(1)
 
 const transactionList = document.getElementById('list');
 
@@ -24,6 +23,9 @@ let salesSimsList
 let cashBal
 let cashBalMove = []
 let cashBalMoveLabel = []
+let simTransMove = []
+let simTransMoveLabel = []
+let simCashBal = []
 
 let inventoryA = []
 let inventoryB = []
@@ -71,7 +73,6 @@ window.onload = () => {
       return document.getElementById(id).innerHTML = opt;
     };
   
-    
     // 関数設定（スタート数字[必須]、終了数字[必須]、表示id名[省略可能]、デフォルト数字[省略可能]）
     
     optionLoop(this_year, this_year, 'id-year', this_year);
@@ -85,26 +86,46 @@ window.onload = () => {
 //     return `${month}-${year}`
 //   }
 
-// API.getSalesSims().then(salesSims => (salesSimsList = salesSims))
-API.getBicycle().then(bicycles => createInitialInventoryDate(bicycles))
+API.getSalesSims().then(salesSims => createSalesSimsData(salesSims))
 API.getCash().then(cash => createPreviousEndMonthCashData(cash))
+API.getBicycle().then(bicycles => createInitialInventoryData(bicycles))
 API.getSales().then(sales => monthlyBreakDown(sales))
-// API.getSales().then(sales => console.log(sales))
 
 const createPreviousEndMonthCashData = (cash) => {
     cashBalMoveLabel.push(cash[0].date);
     cashBalMove.push(cash[0].bal);
+    // createCashChartData(cashBalMove, cashBalMoveLabel, salesSimsList,simCashBal)
 }
 
-const createInitialInventoryDate = (bicycles) => {
+const createInitialInventoryData = (bicycles) => {
     bicycleList = bicycles
     for (let i = 0; i < bicycleList.length; i++) {
-        console.log(bicycleList[i].bitype)
         inventoryList[i].push(bicycleList[i].qty)
-        // inventoryMoveLabel[i].push(bicycleList[i].bitype)
     }
 }
 
+const createSalesSimsData = (salesSims) => {
+    salesSimsList = salesSims
+    for (let i = 0; i < salesSimsList.length; i++) {
+        simTransMoveLabel.push(salesSimsList[i].date2)
+        simTransMove.push(salesSimsList[i].valuesold)
+    }
+}
+
+const createCashChartData = (cashBalMove, cashBalMoveLabel, salesSimsList, simCashBal) => {
+    for (let i = 0; i < salesSimsList.length; i++) {
+        cashBalMoveLabel.push(simTransMoveLabel[i])
+        cashBalMove.push(simTransMove[i])
+    }
+    /// 累積値 \\\
+    for (let i = 1; i < cashBalMove.length + 1; i++) {
+        let sum = cashBalMove.slice(-cashBalMove.lenght, i).reduce((a , b) =>{
+            return a + b
+        })
+        simCashBal.push(sum)
+        sum = 0
+    }
+}
 
 const monthlyBreakDown = (sales) => {
     salesHist = sales
@@ -121,9 +142,10 @@ const monthlyBreakDown = (sales) => {
     /// 粗利　GrossProfit計算 \\\
     calcMonthlyGrossProfit(monthlySalesFigure, monthlyCOGSFigure)
     /// グラフ \\\
+    createCashChartData(cashBalMove, cashBalMoveLabel, salesSimsList,simCashBal)
     dailyChart3(monthlySalesFigure)
     dailyChart4(monthlyGrossProfitFigure)
-    dailyChart1(cashBalMoveLabel, cashBalMove)
+    dailyChart1(cashBalMoveLabel, simCashBal)
     dailyChart2(cashBalMoveLabel, inventoryA, inventoryB, inventoryC)
 }
 
@@ -165,14 +187,17 @@ const calcMonthlyGrossProfit = (monthlySalesFigure, monthlyCOGSFigure) => {
     }
 }
 
-const renderSalesSims  = () => {
 
-    API.getSalesSims().then(salesSims => console.log(salesSims))
-}
+//////////Render Simulated Transactions\\\\\\\\\\\\\\\\
+// const renderSims  = () => {
+//     API.getSalesSims().then(salesSims => console.log(salesSims))
+//     ////work in progress \\\\\
+//     //// by using for(tran of salesSims), need to pass a simulated transaction to renderSimTrans to render 1 by 1 
+// }
 
-//////////render portfolio\\\\\\\\\\\\\\\\
-const renderSimTrans = (newTrans) => {
-    console.log(newTrans)
+
+// const renderSimTrans = () => {
+//     console.log(s)
     // const div = document.createElement("div")
     // div.id = s.id
     // const li = document.createElement("li")
@@ -187,53 +212,10 @@ const renderSimTrans = (newTrans) => {
     // // dBtn.addEventListener("click", (e) => {
     // //     deleteAcc(h3,div)
     // // // })
-  
     // h3.insertAdjacentElement("beforeend", dBtn)
     // transactionList.appendChild(div)
-}
+// }
     
-console.log(monthlySalesFigure)
-console.log(monthlyCOGSFigure)
-
-// newForm.addEventListener("submit", (e) => {
-//     /// bicycle id から原価単価と販売価格を取得 \\\
-//     // let bicycleInfo = bicycleList.filter((item, index) => {
-//     //     if(item.id.indexOf(selectType.value = 0)) return true;
-//     // })
-//     let bicycleInfo = bicycleList.filter((bicycle, index) => {
-//         if(bicycle.id == parseInt(selectType.value)) return true;
-//     })
-//     console.log(bicycleInfo)
-//     console.log(e)
-//     if (selectTrans.value == "sale") {
-//     //back-end first. passimistic as i need id for rerendering portforlio
-//         let date1Plus2 = String (parseInt(transDay.options[0].value) + 2)
-//         const newTrans = {
-//         date1: `${transYear.options[0].value}-${transMonth.options[0].value}-${transDay.options[0].value}`,
-//         date2: `${transYear.options[0].value}-${transMonth.options[0].value}-${date1Plus2}`,
-//         bicycle_id: selectType.value,
-//         qtysold: createTrans.value,
-//         valuesold: createTrans.value * bicycleInfo[0].uprice,
-//         costsold: createTrans.value * bicycleInfo[0].ucost,
-//         };
-//         API.createNewTrans(newTrans).then(newTrans => console.log(newTrans))
-//         renderSalesSims()
-//         // API.createNewTrans(newTrans)
-//         console.log("test")
-//     } else {
-//     console.log("test2")
-//     // setTimeout("API.getSalesSims().then(salesSims => renderSalesSims(salesSims))", 5000)
-//     // setTimeout("API.getSalesSims().then(salesSims => console.log(salesSims))", 10000)
-//     // API.getSalesSims().then(salesSims => console.log(salesSims))
-    
-//     console.log("test3")
-//     // API.createNewTrans(newTrans).then(p => renderPortfolio(p))
-//     // // to calc to include newly created port
-//     // sum = dataFigures.reduce((accum, val) => accum + val, 0)
-//     // calcPercentage(sum, dataFigures)}
-//     }
-//   });
-
   newForm.addEventListener("submit", (e) => {
     let bicycleInfo = bicycleList.filter((bicycle, index) => {
         if(bicycle.id == parseInt(selectType.value)) return true;
@@ -247,7 +229,7 @@ console.log(monthlyCOGSFigure)
         valuesold: createTrans.value * bicycleInfo[0].uprice,
         costsold: createTrans.value * bicycleInfo[0].ucost,
         };
-        API.createNewTrans(newTrans).then(renderSalesSims())
+        API.createNewTrans(newTrans).then(renderSims())
   });
 
 /// チャート\\\
@@ -311,8 +293,7 @@ const dailyChart4 = (monthlyGrossProfitFigure) => {
     })
 }
 
-
-const dailyChart1 = (cashBalMoveLabel,cashBalMove) => {
+const dailyChart1 = (cashBalMoveLabel, simCashBal) => {
     new Chart(ctx1, {
         type: 'line',
         data: {
@@ -328,7 +309,7 @@ const dailyChart1 = (cashBalMoveLabel,cashBalMove) => {
                 label: 'Cash Balance',
                 backgroundColor: 'rgb(10, 150, 190)',
                 borderColor: 'rgb(10, 150, 190)',
-                data: cashBalMove,
+                data: simCashBal,
                 lineTension: 0,
                 fill: false
             }]
