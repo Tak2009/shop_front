@@ -3,6 +3,22 @@ const SALESSIM_URL = "https://shop-biz-backend.herokuapp.com/salessimulations";
 const BICYCLE_URL = "https://shop-biz-backend.herokuapp.com/bicycles";
 const CASH_URL = "https://shop-biz-backend.herokuapp.com/cashes";
 
+
+const get = (url) =>{
+    return fetch(url)
+}
+
+const getInitialData = async (url, url2) => { 
+    const resp = await get(url)
+    const salesSims = await resp.json()
+    const resp2 = await get(url2)
+    const cash = await resp2.json()
+    const results = []
+    results.push(salesSims)
+    results.push(cash)
+    return results
+}
+
 const getSales = () => {
     return fetch(SALES_URL)
     .then(resp => resp.json())
@@ -63,4 +79,4 @@ const deleteSimTrans = (id) => {
 };
 
 
-API = {getSales, getBicycle, createNewTrans, deleteSimTrans, getSalesSims, getSims, getCash};
+API = {getSales, getBicycle, createNewTrans, deleteSimTrans, getSalesSims, getSims, getCash, getInitialData};

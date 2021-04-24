@@ -95,14 +95,14 @@ window.onload = () => {
 //     return `${month}-${year}`
 //   }
 
-API.getSalesSims().then(salesSims => createSalesSimsData(salesSims))
-API.getCash().then(cash => createPreviousEndMonthCashData(cash))
+API.getInitialData(SALESSIM_URL, CASH_URL).then(results => createSalesSimsData(results))
 API.getBicycle().then(bicycles => createInitialInventoryData(bicycles))
 API.getSales().then(sales => monthlyBreakDown(sales))
 
-const createPreviousEndMonthCashData = (cash) => {
-    cashBalMoveLabel.push(cash[0].date);
-    cashBalMove.push(cash[0].bal);
+const createPreviousEndMonthCashData = (results) => {
+    cashBalMoveLabel.push(results[1][0].date);
+    cashBalMove.push(results[1][0].bal);
+    dailylyCashBreakDown(results)
 }
 
 const createInitialInventoryData = (bicycles) => {
@@ -112,26 +112,23 @@ const createInitialInventoryData = (bicycles) => {
     }
 }
 
-const createSalesSimsData = (salesSims) => {
-    salesSimsList = salesSims
-    for (let i = 0; i < salesSimsList.length; i++) {
-        simTransMoveLabel.push(salesSimsList[i].date2)
-        simTransMove.push(salesSimsList[i].valuesold)
-    }
+const createSalesSimsData = (results) => {
+    salesSimsList = results[0]
+    createPreviousEndMonthCashData(results)
 }
 
-const dailylyCashBreakDown = (salesSimsList) => {
+const dailylyCashBreakDown = (results) => {
 
     // ラベル作り \\
-    for (let i = 0; i < salesSimsList.length; i++) {
-        salesSimsDates.push(salesSimsList[i].date1)
+    for (let i = 0; i < results[0].length; i++) {
+        salesSimsDates.push(results[0][i].date1)
     }
     dailyChartLabel = [...new Set(salesSimsDates)]
     dailyChartLabel.sort()
 
     // 日次集計 \\
     dailyChartLabel.forEach(simTransactionDate => {
-    let dailySalesTransactions = salesSimsList.filter((item, index) => {
+    let dailySalesTransactions = results[0].filter((item, index) => {
         if(item.date1.indexOf(simTransactionDate) >= 0) return true;
     })
     transactionsGroupedByDate.push(dailySalesTransactions)
@@ -157,6 +154,8 @@ const dailylyCashBreakDown = (salesSimsList) => {
         dailySalesFigureChartData.push(sum)
         sum = 0
     }
+
+    dailyChart1(dailyChartLabel, dailySalesFigureChartData)
 }
 
 const monthlyBreakDown = (sales) => {
@@ -174,10 +173,8 @@ const monthlyBreakDown = (sales) => {
     /// 粗利　GrossProfit計算 \\\
     calcMonthlyGrossProfit(monthlySalesFigure, monthlyCOGSFigure)
     /// グラフ \\\
-    dailylyCashBreakDown(salesSimsList)
     dailyChart3(monthlySalesFigure)
     dailyChart4(monthlyGrossProfitFigure)
-    dailyChart1(dailyChartLabel, dailySalesFigureChartData)
     dailyChart2(cashBalMoveLabel, inventoryA, inventoryB, inventoryC)
 }
 
