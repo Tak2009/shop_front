@@ -20,9 +20,18 @@ const monthList = ["2021-01","2021-02","2021-03","2021-04"]
 let salesHist
 let bicycleList
 let salesSimsList
+ 
+// daily chart 1 \\
+let dailyChartLabel = []
+let salesSimsDates = []
+let transactionsGroupedByDate = []
+let dailySalesFigure = []
+let dailySalesFigureChartData = []
 let cashBal
 let cashBalMove = []
 let cashBalMoveLabel = []
+
+
 let simTransMove = []
 let simTransMoveLabel = []
 let simCashBal = []
@@ -94,7 +103,6 @@ API.getSales().then(sales => monthlyBreakDown(sales))
 const createPreviousEndMonthCashData = (cash) => {
     cashBalMoveLabel.push(cash[0].date);
     cashBalMove.push(cash[0].bal);
-    // createCashChartData(cashBalMove, cashBalMoveLabel, salesSimsList,simCashBal)
 }
 
 const createInitialInventoryData = (bicycles) => {
@@ -112,17 +120,41 @@ const createSalesSimsData = (salesSims) => {
     }
 }
 
-const createCashChartData = (cashBalMove, cashBalMoveLabel, salesSimsList, simCashBal) => {
+const dailylyCashBreakDown = (salesSimsList) => {
+
+    // ラベル作り \\
     for (let i = 0; i < salesSimsList.length; i++) {
-        cashBalMoveLabel.push(simTransMoveLabel[i])
-        cashBalMove.push(simTransMove[i])
+        salesSimsDates.push(salesSimsList[i].date1)
     }
-    /// 累積値 \\\
-    for (let i = 1; i < cashBalMove.length + 1; i++) {
-        let sum = cashBalMove.slice(-cashBalMove.lenght, i).reduce((a , b) =>{
+    dailyChartLabel = [...new Set(salesSimsDates)]
+    dailyChartLabel.sort()
+
+    // 日次集計 \\
+    dailyChartLabel.forEach(simTransactionDate => {
+    let dailySalesTransactions = salesSimsList.filter((item, index) => {
+        if(item.date1.indexOf(simTransactionDate) >= 0) return true;
+    })
+    transactionsGroupedByDate.push(dailySalesTransactions)
+    console.log(transactionsGroupedByDate)
+    });
+    // 日次合計 \\
+    for (const date of transactionsGroupedByDate) {
+        let sum = 0
+        for (let i = 0; i < date.length; i++) {
+            console.log(date[i].valuesold)
+            sum += date[i].valuesold
+    }
+    dailySalesFigure.push(sum)
+    }
+    // 累積値 \\
+    dailyChartLabel.unshift(cashBalMoveLabel[0])
+    dailySalesFigure.unshift(cashBalMove[0])
+
+    for (let i = 1; i < dailySalesFigure.length + 1; i++) {
+        let sum = dailySalesFigure.slice(-dailySalesFigure.lenght, i).reduce((a , b) =>{
             return a + b
         })
-        simCashBal.push(sum)
+        dailySalesFigureChartData.push(sum)
         sum = 0
     }
 }
@@ -142,10 +174,10 @@ const monthlyBreakDown = (sales) => {
     /// 粗利　GrossProfit計算 \\\
     calcMonthlyGrossProfit(monthlySalesFigure, monthlyCOGSFigure)
     /// グラフ \\\
-    createCashChartData(cashBalMove, cashBalMoveLabel, salesSimsList,simCashBal)
+    dailylyCashBreakDown(salesSimsList)
     dailyChart3(monthlySalesFigure)
     dailyChart4(monthlyGrossProfitFigure)
-    dailyChart1(cashBalMoveLabel, simCashBal)
+    dailyChart1(dailyChartLabel, dailySalesFigureChartData)
     dailyChart2(cashBalMoveLabel, inventoryA, inventoryB, inventoryC)
 }
 
@@ -220,16 +252,16 @@ const calcMonthlyGrossProfit = (monthlySalesFigure, monthlyCOGSFigure) => {
     let bicycleInfo = bicycleList.filter((bicycle, index) => {
         if(bicycle.id == parseInt(selectType.value)) return true;
     })
-        let date1Plus2 = String (parseInt(transDay.options[0].value) + 2)
+        let date1Plus2 = String (parseInt(transDay.value) + 2)
         const newTrans = {
-        date1: `${transYear.options[0].value}-${transMonth.options[0].value}-${transDay.options[0].value}`,
-        date2: `${transYear.options[0].value}-${transMonth.options[0].value}-${date1Plus2}`,
+        date1: `${transYear.value}-${transMonth.value}-${transDay.value}`,
+        date2: `${transYear.value}-${transMonth.value}-${date1Plus2}`,
         bicycle_id: selectType.value,
         qtysold: createTrans.value,
         valuesold: createTrans.value * bicycleInfo[0].uprice,
         costsold: createTrans.value * bicycleInfo[0].ucost,
         };
-        API.createNewTrans(newTrans).then(renderSims())
+        API.createNewTrans(newTrans)
   });
 
 /// チャート\\\
@@ -293,30 +325,6 @@ const dailyChart4 = (monthlyGrossProfitFigure) => {
     })
 }
 
-const dailyChart1 = (cashBalMoveLabel, simCashBal) => {
-    new Chart(ctx1, {
-        type: 'line',
-        data: {
-            labels: cashBalMoveLabel,
-            datasets: [{
-            //     label: '閾値下限',
-            //     backgroundColor: 'rgb(255, 99, 132)',
-            //     borderColor: 'rgb(255, 99, 132)',
-            //     data: threshold,
-            //     lineTension: 0,
-            //     fill: false
-            // }, {
-                label: 'Cash Balance',
-                backgroundColor: 'rgb(10, 150, 190)',
-                borderColor: 'rgb(10, 150, 190)',
-                data: simCashBal,
-                lineTension: 0,
-                fill: false
-            }]
-        }
-    });
-}
-
 const dailyChart2 = (cashBalMoveLabel, inventoryA, inventoryB, inventoryC) => {
     new Chart(ctx2, {
         type: 'line',
@@ -341,6 +349,23 @@ const dailyChart2 = (cashBalMoveLabel, inventoryA, inventoryB, inventoryC) => {
                 backgroundColor: 'rgb(10, 150, 290)',
                 borderColor: 'rgb(10, 150, 290)',
                 data: inventoryC,
+                lineTension: 0,
+                fill: false
+            }]
+        }
+    });
+}
+
+const dailyChart1 = (dailyChartLabel, dailySalesFigureChartData) => {
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: dailyChartLabel,
+            datasets: [{
+                label: 'Cash Balance',
+                backgroundColor: 'rgb(10, 150, 190)',
+                borderColor: 'rgb(10, 150, 190)',
+                data: dailySalesFigureChartData,
                 lineTension: 0,
                 fill: false
             }]

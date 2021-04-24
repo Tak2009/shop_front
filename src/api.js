@@ -36,8 +36,8 @@ const createNewTrans = (newTrans) => {
             "Accept": "application/json"
         },
         body: JSON.stringify(newTrans)
-    })
-    // }).then(resp => resp.json())
+    // })
+    }).then(resp => resp.json())
 };
 
 // // const patchAcc = (acc, id) => {
