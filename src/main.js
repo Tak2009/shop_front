@@ -17,6 +17,7 @@ const createTrans = document.querySelector("#create-trans")
 
 const todayDateElement = document.querySelector("#today")
 const monthList = ["2021-01","2021-02","2021-03","2021-04"]
+let monthlyChartLabel = []
 let salesHist
 let bicycleList
 let salesSimsList
@@ -31,6 +32,8 @@ let cashBal
 let cashBalMove = []
 let cashBalMoveLabel = []
 
+let salesMonthlyDates = []
+let salesSimsMonthlyDates = []
 
 let simTransMove = []
 let simTransMoveLabel = []
@@ -59,18 +62,15 @@ window.onload = () => {
 
 
 (function() {
-    
     //   今日の日付データを変数todayに格納
     let optionLoop, this_day, this_month, this_year, today;
     today = new Date();
     this_year = today.getFullYear();
     this_month = today.getMonth() + 1;
     this_day = today.getDate();
-    
     //   ループ処理（スタート数字、終了数字、表示id名、デフォルト数字）
     optionLoop = function(start, end, id, this_day) {
       let i, opt;
-  
       opt = null;
       for (i = start; i <= end ; i++) {
         if (i === this_day) {
@@ -81,9 +81,7 @@ window.onload = () => {
       }
       return document.getElementById(id).innerHTML = opt;
     };
-  
     // 関数設定（スタート数字[必須]、終了数字[必須]、表示id名[省略可能]、デフォルト数字[省略可能]）
-    
     optionLoop(this_year, this_year, 'id-year', this_year);
     optionLoop(this_month, 12, 'id-month', this_month);
     optionLoop(this_day, 30, 'id-day', this_day);
@@ -95,9 +93,11 @@ window.onload = () => {
 //     return `${month}-${year}`
 //   }
 
-API.getInitialData(SALESSIM_URL, CASH_URL).then(results => createSalesSimsData(results))
-API.getBicycle().then(bicycles => createInitialInventoryData(bicycles))
-API.getSales().then(sales => monthlyBreakDown(sales))
+API.getInitialDailyData(SALESSIM_URL, CASH_URL).then(results => createSalesSimsData(results))
+API.getInitialMonthlyData(SALES_URL, BICYCLE_URL, SALESSIM_URL).then(results => createInitialInventoryData(results))
+
+// API.getBicycle().then(bicycles => createInitialInventoryData(bicycles))
+// API.getSales().then(sales => monthlyBreakDown(sales))
 
 const createPreviousEndMonthCashData = (results) => {
     cashBalMoveLabel.push(results[1][0].date);
@@ -105,11 +105,13 @@ const createPreviousEndMonthCashData = (results) => {
     dailylyCashBreakDown(results)
 }
 
-const createInitialInventoryData = (bicycles) => {
-    bicycleList = bicycles
+const createInitialInventoryData = (results) => {
+    bicycleList = results[1]
     for (let i = 0; i < bicycleList.length; i++) {
         inventoryList[i].push(bicycleList[i].qty)
     }
+    monthlyBreakDown(results)
+    dailyChart2(cashBalMoveLabel, inventoryA, inventoryB, inventoryC)
 }
 
 const createSalesSimsData = (results) => {
@@ -158,11 +160,30 @@ const dailylyCashBreakDown = (results) => {
     dailyChart1(dailyChartLabel, dailySalesFigureChartData)
 }
 
-const monthlyBreakDown = (sales) => {
-    salesHist = sales
+const monthlyBreakDown = (results) => {
+    salesHist = results[0]
+    // Monthlyラベル作り \\
+    // salesから 
+    for (let i = 0; i < results[0].length; i++) {
+        salesMonthlyDates.push(results[0][i].date1.slice(0,7))
+    }
+    // monthlyChartLabel = [...new Set(salesMonthlyDates)]
+    // monthlyChartLabel.sort()
+    let salesSimsList2 = results[2]
+    
+     // salesSimsから \\
+    for (let i = 0; i < salesSimsList2.length; i++) {
+        salesSimsMonthlyDates.push(salesSimsList2[i].date1.slice(0,7))
+    }
+
+    let salesAndSalesSimsMonthlyDates = salesMonthlyDates.concat(salesSimsMonthlyDates)
+
+    monthlyChartLabel = [...new Set(salesAndSalesSimsMonthlyDates)]
+    monthlyChartLabel.sort()
+
     /// トランゼクションを月単位に分ける \\\
     monthList.forEach(transactionDate => {
-        let monthlySalesTransactions = sales.filter((item, index) => {
+        let monthlySalesTransactions = salesHist.filter((item, index) => {
             if(item.date1.indexOf(transactionDate) >= 0) return true;
         })
         transactionsGroupedByMonth.push(monthlySalesTransactions)
@@ -175,7 +196,7 @@ const monthlyBreakDown = (sales) => {
     /// グラフ \\\
     dailyChart3(monthlySalesFigure)
     dailyChart4(monthlyGrossProfitFigure)
-    dailyChart2(cashBalMoveLabel, inventoryA, inventoryB, inventoryC)
+    // dailyChart2(cashBalMoveLabel, inventoryA, inventoryB, inventoryC)
 }
 
 /// 売り上げ及び原価計算開始 \\\
@@ -217,40 +238,12 @@ const calcMonthlyGrossProfit = (monthlySalesFigure, monthlyCOGSFigure) => {
 }
 
 
-//////////Render Simulated Transactions\\\\\\\\\\\\\\\\
-// const renderSims  = () => {
-//     API.getSalesSims().then(salesSims => console.log(salesSims))
-//     ////work in progress \\\\\
-//     //// by using for(tran of salesSims), need to pass a simulated transaction to renderSimTrans to render 1 by 1 
-// }
-
-
-// const renderSimTrans = () => {
-//     console.log(s)
-    // const div = document.createElement("div")
-    // div.id = s.id
-    // const li = document.createElement("li")
-
-    // const h3 = document.createElement("h3")
-    // // // h3.innerText = `${p.exchange.currency.slice(-3)}: ${p.local_amt.toLocaleString()}, which is equivalent to GBP: ${p.home_amt.toLocaleString()}`
-    // h3.innerText = `${s.id}: test}`
-  
-    // const dBtn = document.createElement("button")
-    // dBtn.innerText = "Delete"
-    // dBtn.className = "button"
-    // // dBtn.addEventListener("click", (e) => {
-    // //     deleteAcc(h3,div)
-    // // // })
-    // h3.insertAdjacentElement("beforeend", dBtn)
-    // transactionList.appendChild(div)
-// }
-    
-  newForm.addEventListener("submit", (e) => {
+newForm.addEventListener("submit", (e) => {
     let bicycleInfo = bicycleList.filter((bicycle, index) => {
         if(bicycle.id == parseInt(selectType.value)) return true;
     })
         let date1Plus2 = String (parseInt(transDay.value) + 2)
-        const newTrans = {
+        const newTran = {
         date1: `${transYear.value}-${transMonth.value}-${transDay.value}`,
         date2: `${transYear.value}-${transMonth.value}-${date1Plus2}`,
         bicycle_id: selectType.value,
@@ -258,8 +251,39 @@ const calcMonthlyGrossProfit = (monthlySalesFigure, monthlyCOGSFigure) => {
         valuesold: createTrans.value * bicycleInfo[0].uprice,
         costsold: createTrans.value * bicycleInfo[0].ucost,
         };
-        API.createNewTrans(newTrans)
+        API.createNewTrans(newTran)
+        // API.createNewTrans(newTran).then((newTran) => renderSimTrans(newTran))
+        // API.getData(SALESSIM_URL).then((json) => renderSimTrans(json))
   });
+
+  //////////Render Simulated Transactions\\\\\\\\\\\\\\\\
+// const renderSimTrans  = (simTrans) => {
+//     console.log(simTrans)
+//     for (tran of simTrans) {renderSimTran(tran)}
+//      ////work in progress \\\\\
+//      //// by using for(tran of salesSims), need to pass a simulated transaction to renderSimTrans to render 1 by 1 
+//  }
+ 
+ 
+//  const renderSimTran = (tran) => {
+//      console.log(tran)
+//      const div = document.createElement("div")
+//      div.id = tran.id
+//      const li = document.createElement("li")
+ 
+//      const h3 = document.createElement("h3")
+//      // // h3.innerText = `${p.exchange.currency.slice(-3)}: ${p.local_amt.toLocaleString()}, which is equivalent to GBP: ${p.home_amt.toLocaleString()}`
+//      h3.innerText = `${tran.id}: test}`
+   
+//      const dBtn = document.createElement("button")
+//      dBtn.innerText = "Delete"
+//      dBtn.className = "button"
+//      // dBtn.addEventListener("click", (e) => {
+//      //     deleteAcc(h3,div)
+//      // // })
+//      h3.insertAdjacentElement("beforeend", dBtn)
+//      transactionList.appendChild(div)
+//  }
 
 /// チャート\\\
 const dailyChart3 = (monthlySalesFigure) => {
