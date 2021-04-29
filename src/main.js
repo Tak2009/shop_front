@@ -51,6 +51,14 @@ let monthlySalesFigure = []
 let monthlyCOGSFigure = []
 let monthlyGrossProfitFigure = []
 
+let this_day, this_month, this_year, today, daysOf2021;
+    today = new Date();
+    this_year = today.getFullYear();
+    this_month = today.getMonth() + 1;
+    this_day = today.getDate();
+    // 月べつ日数
+    daysOf2021 = [31,28,31,30,31,30,31,31,30,31,30,31]
+
 window.onload = () => {
     let today =  new Date()
     let dd = ("0" + today.getDate()).slice(-2)
@@ -60,32 +68,39 @@ window.onload = () => {
     todayDateElement.innerText = `Today is ${todayDate}`
 }
 
-
-(function() {
-    //   今日の日付データを変数todayに格納
-    let optionLoop, this_day, this_month, this_year, today;
-    today = new Date();
-    this_year = today.getFullYear();
-    this_month = today.getMonth() + 1;
-    this_day = today.getDate();
-    //   ループ処理（スタート数字、終了数字、表示id名、デフォルト数字）
-    optionLoop = function(start, end, id, this_day) {
-      let i, opt;
-      opt = null;
-      for (i = start; i <= end ; i++) {
-        if (i === this_day) {
-          opt += "<option value='" + i + "' selected>" + i + "</option>";
-        } else {
-          opt += "<option value='" + i + "'>" + i + "</option>";
-        }
+const optionLoop = (start, end, id, this_day) => {
+    let i, opt;
+    opt = null;
+    for (i = start; i <= end ; i++) {
+      if (i === this_day) {
+        opt += "<option value='" + i + "' selected>" + i + "</option>";
+      } else {
+        opt += "<option value='" + i + "'>" + i + "</option>";
       }
-      return document.getElementById(id).innerHTML = opt;
-    };
+    }
+    return document.getElementById(id).innerHTML = opt;
+  };
+
+// 即時関数 \\
+const dateDropDown = (() => {
     // 関数設定（スタート数字[必須]、終了数字[必須]、表示id名[省略可能]、デフォルト数字[省略可能]）
     optionLoop(this_year, this_year, 'id-year', this_year);
     optionLoop(this_month, 12, 'id-month', this_month);
-    optionLoop(this_day, 30, 'id-day', this_day);
+    optionLoop(this_day, daysOf2021[this_month - 1], 'id-day', this_day)
   })();
+
+  transMonth.addEventListener('change', e => {
+      console.log(e.target.value)
+    //   transMonth.innerHTML = '';
+      const updatedMonth = e.target.value;
+      console.log(e.target.value)
+      console.log(this_month)
+      if (e.target.value == parseInt(this_month)){
+        optionLoop(this_day, daysOf2021[updatedMonth - 1], 'id-day', this_day)
+      } else {
+        optionLoop(1, daysOf2021[updatedMonth - 1], 'id-day', this_day)
+      }
+  })
 
 // const dateFormat = (date) => {
 //     const year = date.slice(0,4)
@@ -95,7 +110,6 @@ window.onload = () => {
 
 API.getInitialDailyData(SALESSIM_URL, CASH_URL).then(results => createSalesSimsData(results))
 API.getInitialMonthlyData(SALES_URL, BICYCLE_URL, SALESSIM_URL).then(results => createInitialInventoryData(results))
-
 // API.getBicycle().then(bicycles => createInitialInventoryData(bicycles))
 // API.getSales().then(sales => monthlyBreakDown(sales))
 
