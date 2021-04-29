@@ -125,7 +125,8 @@ const createInitialInventoryData = (results) => {
         inventoryList[i].push(bicycleList[i].qty)
     }
     monthlyBreakDown(results)
-    dailyChart2(cashBalMoveLabel, inventoryA, inventoryB, inventoryC)
+    dailyInventoryBreakDown(results)
+    // dailyChart2(cashBalMoveLabel, inventoryA, inventoryB, inventoryC)
 }
 
 const createSalesSimsData = (results) => {
@@ -156,8 +157,8 @@ const dailylyCashBreakDown = (results) => {
         for (let i = 0; i < date.length; i++) {
             console.log(date[i].valuesold)
             sum += date[i].valuesold
-    }
-    dailySalesFigure.push(sum)
+        }
+        dailySalesFigure.push(sum)
     }
     // 累積値 \\
     dailyChartLabel.unshift(cashBalMoveLabel[0])
@@ -173,6 +174,99 @@ const dailylyCashBreakDown = (results) => {
 
     dailyChart1(dailyChartLabel, dailySalesFigureChartData)
 }
+
+let dailyChartLabel2 = []
+let salesSimsDates2 = []
+let transactionsGroupedByDate2 = []
+
+let dailyInventoryAFigure = []
+let dailyInventoryBFigure = []
+let dailyInventoryCFigure = []
+let inventoryDaily = [dailyInventoryAFigure, dailyInventoryBFigure, dailyInventoryCFigure]
+let dailyInventoryAAccum = []
+let dailyInventoryBAccum = []
+let dailyInventoryCAccum = []
+let dailyInventoryChartData = [dailyInventoryAAccum, dailyInventoryBAccum, dailyInventoryCAccum]
+
+const dailyInventoryBreakDown = (results) => {
+
+    // ラベル作り \\
+    for (let i = 0; i < results[2].length; i++) {
+        salesSimsDates2.push(results[2][i].date1)
+    }
+    dailyChartLabel2 = [...new Set(salesSimsDates2)]
+    dailyChartLabel2.sort()
+    debugger;
+    // 日次集計 \\
+    dailyChartLabel2.forEach(simTransactionDate => {
+    let dailySalesTransactions2 = results[2].filter((item, index) => {
+        if(item.date1.indexOf(simTransactionDate) >= 0) return true;
+    })
+    transactionsGroupedByDate2.push(dailySalesTransactions2)
+    console.log(transactionsGroupedByDate2)
+    });
+    // 日次合計 \\
+    for (const date of transactionsGroupedByDate2) {
+        let sumA = 0, sumB = 0, sumC = 0
+        for (let i = 0; i < date.length; i++) {
+            console.log(date[i].valuesold)
+            if (date[i].bicycle_id === 1) {
+                sumA -= date[i].qtysold
+                sumB = 0
+                sumC = 0
+              
+            } else if (date[i].bicycle_id === 2) {
+                sumA = 0
+                sumB -= date[i].qtysold
+                sumC = 0
+
+            } else {
+                sumA = 0
+                sumB = 0
+                sumC -= date[i].qtysold
+            }
+        }
+        dailyInventoryAFigure.push(sumA)
+        dailyInventoryBFigure.push(sumB)
+        dailyInventoryCFigure.push(sumC)
+        sumA = 0
+        sumB = 0
+        sumC = 0
+    }
+    // 累積値 \\
+    for (let i = 0; i < inventoryDaily.length; i++){
+        inventoryDaily[i].unshift(results[1][i].qty)
+    }
+    
+    for (let i = 1; i < dailyInventoryAFigure.length + 1; i++) {
+        let sum = dailyInventoryAFigure.slice(-dailyInventoryAFigure.lenght, i).reduce((a , b) =>{
+            return a + b
+        })
+        dailyInventoryAAccum.push(sum)
+        sum = 0
+    }
+
+    for (let i = 1; i < dailyInventoryBFigure.length + 1; i++) {
+        let sum = dailyInventoryBFigure.slice(-dailyInventoryBFigure.lenght, i).reduce((a , b) =>{
+            return a + b
+        })
+        dailyInventoryBAccum.push(sum)
+        sum = 0
+    }
+
+    for (let i = 1; i < dailyInventoryCFigure.length + 1; i++) {
+        let sum = dailyInventoryCFigure.slice(-dailyInventoryCFigure.lenght, i).reduce((a , b) =>{
+            return a + b
+        })
+        dailyInventoryCAccum.push(sum)
+        sum = 0
+    }
+    dailyChart2(dailyChartLabel, dailyInventoryAAccum, dailyInventoryBAccum, dailyInventoryCAccum)
+}
+
+    // dailyChart1(dailyChartLabel, dailySalesFigureChartData)
+
+
 
 const monthlyBreakDown = (results) => {
     salesHist = results[0]
@@ -250,7 +344,6 @@ const calcMonthlyGrossProfit = (monthlySalesFigure, monthlyCOGSFigure) => {
         monthlyGrossProfitFigure.push(gross)
     }
 }
-
 
 newForm.addEventListener("submit", (e) => {
     let bicycleInfo = bicycleList.filter((bicycle, index) => {
@@ -360,30 +453,30 @@ const dailyChart4 = (monthlyGrossProfitFigure) => {
     })
 }
 
-const dailyChart2 = (cashBalMoveLabel, inventoryA, inventoryB, inventoryC) => {
+const dailyChart2 = (dailyChartLabel, dailyInventoryAAccum, dailyInventoryBAccum, dailyInventoryCAccum) => {
     new Chart(ctx2, {
         type: 'line',
         data: {
-            labels: cashBalMoveLabel,
+            labels: dailyChartLabel,
             datasets: [{
                 label: 'A',
                 backgroundColor: 'rgb(255, 99, 132)',
                 borderColor: 'rgb(255, 99, 132)',
-                data: inventoryA,
+                data: dailyInventoryAAccum,
                 lineTension: 0,
                 fill: false
             }, {
                 label: 'B',
                 backgroundColor: 'rgb(10, 150, 190)',
                 borderColor: 'rgb(10, 150, 190)',
-                data: inventoryB,
+                data: dailyInventoryBAccum,
                 lineTension: 0,
                 fill: false
             }  ,{
                 label: 'C',
                 backgroundColor: 'rgb(10, 150, 290)',
                 borderColor: 'rgb(10, 150, 290)',
-                data: inventoryC,
+                data: dailyInventoryCAccum,
                 lineTension: 0,
                 fill: false
             }]
