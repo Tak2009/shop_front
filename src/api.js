@@ -80,9 +80,9 @@ const createNewTrans = (newTrans) => {
             throw new Error(`${resp.status}`)
         }
         return resp.blob()
-    }).then(blob => {
+    }).then((blob) => {
     }).catch(reason => {
-        console.log
+        console.log(reason)
     })
 };
 

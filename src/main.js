@@ -43,7 +43,6 @@ let inventoryA = []
 let inventoryB = []
 let inventoryC = []
 let inventoryList = [inventoryA,inventoryB,inventoryC]
-// let inventoryMoveLabel = []
 
 let transactionsGroupedByMonth = []
 let costSoldGroupedByMonth = []
