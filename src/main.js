@@ -392,14 +392,19 @@ const renderSimTrans  = (simTrans) => {
 
   const reRender = () => {
     transactionList.innerHTML = ""
-    ctx1.parentNode.remove()
-    ctx2.parentNode.remove()
+    myDailyChart1.destroy()
+    myDailyChart2.destroy()
+    // myDailyChart3.remove()
+    // myDailyChart4.remove()
+    // ctx4.parentNode.remove()
     setTimeout("API.getInitialDailyData(SALESSIM_URL, CASH_URL, BICYCLE_URL).then(results => createSalesSimsData(results))", 500)
   }
 
+  let myDailyChart1, myDailyChart2, myDailyChart3, myDailyChart4
+
 /// チャート\\\
 const dailyChart3 = (monthlySalesFigure) => {
-    new Chart(ctx3, {
+    myDailyChart3 = new Chart(ctx3, {
         type: 'bar',
         data: {
             labels: monthList,
@@ -429,7 +434,7 @@ const dailyChart3 = (monthlySalesFigure) => {
 }
 
 const dailyChart4 = (monthlyGrossProfitFigure) => {
-    new Chart(ctx4, {
+    myDailyChart4 = new Chart(ctx4, {
         type: 'bar',
         data: {
             labels: monthList,
@@ -459,7 +464,7 @@ const dailyChart4 = (monthlyGrossProfitFigure) => {
 }
 
 const dailyChart2 = (dailyChartLabel, dailyInventoryAAccum, dailyInventoryBAccum, dailyInventoryCAccum) => {
-    new Chart(ctx2, {
+    myDailyChart2 =new Chart(ctx2, {
         type: 'line',
         data: {
             labels: dailyChartLabel,
@@ -490,7 +495,7 @@ const dailyChart2 = (dailyChartLabel, dailyInventoryAAccum, dailyInventoryBAccum
 }
 
 const dailyChart1 = (dailyChartLabel, dailySalesFigureChartData) => {
-    new Chart(ctx1, {
+    myDailyChart1 = new Chart(ctx1, {
         type: 'line',
         data: {
             labels: dailyChartLabel,
