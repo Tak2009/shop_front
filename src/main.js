@@ -369,7 +369,7 @@ const renderSimTrans  = (simTrans) => {
      const div = document.createElement("div")
      div.id = tran.id
      const li = document.createElement("li")
-     li.innerText = `${tran.date1}: Transaction Type - Sales, Quantity - ${tran.qtysold}, Amount - ${tran.valuesold}`
+     li.innerText = `${tran.date1}: TranType - Sales, ProType - ${tran["bicycle"].bitype}, Quantity - ${tran.qtysold}, Amount - ${tran.valuesold}`
      const dBtn = document.createElement("button")
      dBtn.innerText = "Delete"
      dBtn.className = "button"
