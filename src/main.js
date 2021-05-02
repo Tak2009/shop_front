@@ -109,8 +109,6 @@ const dateDropDown = (() => {
 
 API.getInitialDailyData(SALESSIM_URL, CASH_URL, BICYCLE_URL).then(results => createSalesSimsData(results))
 API.getInitialMonthlyData(SALES_URL, BICYCLE_URL, SALESSIM_URL).then(results => createMonthlyData(results))
-// API.getBicycle().then(bicycles => createInitialInventoryData(bicycles))
-// API.getSales().then(sales => monthlyBreakDown(sales))
 
 const createPreviousEndMonthCashData = (results) => {
     cashBalMoveLabel.push(results[1][0].date);
