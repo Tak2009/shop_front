@@ -7,14 +7,17 @@ const get = (url) =>{
     return fetch(url)
 }
 
-const getInitialDailyData = async (url, url2) => { 
+const getInitialDailyData = async (url, url2, url3) => { 
     const resp = await get(url)
     const salesSims = await resp.json()
     const resp2 = await get(url2)
     const cash = await resp2.json()
+    const resp3 = await get(url3)
+    const bicycles = await resp3.json()
     const results = []
     results.push(salesSims)
     results.push(cash)
+    results.push(bicycles)
     return results
 }
 
@@ -97,7 +100,7 @@ const createNewTrans = (newTrans) => {
 // //     })
 // // };
 
-const deleteSimTrans = (id) => {
+const deleteSimTran = (id) => {
     return fetch(`${SALESSIM_URL}/${id}`,{
         method: "DELETE",
         headers: {
@@ -109,4 +112,4 @@ const deleteSimTrans = (id) => {
 };
 
 
-API = {getSales, getBicycle, createNewTrans, deleteSimTrans, getSalesSims, getSims, getCash, getInitialDailyData, getData, getInitialMonthlyData};
+API = {getSales, getBicycle, createNewTrans, getSalesSims, getSims, getCash, getInitialDailyData, getData, getInitialMonthlyData, deleteSimTran};

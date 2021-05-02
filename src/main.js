@@ -107,8 +107,8 @@ const dateDropDown = (() => {
 //     return `${month}-${year}`
 //   }
 
-API.getInitialDailyData(SALESSIM_URL, CASH_URL).then(results => createSalesSimsData(results))
-API.getInitialMonthlyData(SALES_URL, BICYCLE_URL, SALESSIM_URL).then(results => createInitialInventoryData(results))
+API.getInitialDailyData(SALESSIM_URL, CASH_URL, BICYCLE_URL).then(results => createSalesSimsData(results))
+API.getInitialMonthlyData(SALES_URL, BICYCLE_URL, SALESSIM_URL).then(results => createMonthlyData(results))
 // API.getBicycle().then(bicycles => createInitialInventoryData(bicycles))
 // API.getSales().then(sales => monthlyBreakDown(sales))
 
@@ -116,15 +116,17 @@ const createPreviousEndMonthCashData = (results) => {
     cashBalMoveLabel.push(results[1][0].date);
     cashBalMove.push(results[1][0].bal);
     dailylyCashBreakDown(results)
+    dailyInventoryBreakDown(results)
+    renderSimTrans(results[0])
 }
 
-const createInitialInventoryData = (results) => {
+const createMonthlyData = (results) => {
     bicycleList = results[1]
     for (let i = 0; i < bicycleList.length; i++) {
         inventoryList[i].push(bicycleList[i].qty)
     }
     monthlyBreakDown(results)
-    dailyInventoryBreakDown(results)
+    // dailyInventoryBreakDown(results)
     // dailyChart2(cashBalMoveLabel, inventoryA, inventoryB, inventoryC)
 }
 
@@ -190,15 +192,15 @@ let dailyInventoryChartData = [dailyInventoryAAccum, dailyInventoryBAccum, daily
 const dailyInventoryBreakDown = (results) => {
 
     // ラベル作り \\
-    for (let i = 0; i < results[2].length; i++) {
-        salesSimsDates2.push(results[2][i].date1)
+    for (let i = 0; i < results[0].length; i++) {
+        salesSimsDates2.push(results[0][i].date1)
     }
     dailyChartLabel2 = [...new Set(salesSimsDates2)]
     dailyChartLabel2.sort()
-    debugger;
+    // debugger;
     // 日次集計 \\
     dailyChartLabel2.forEach(simTransactionDate => {
-    let dailySalesTransactions2 = results[2].filter((item, index) => {
+    let dailySalesTransactions2 = results[0].filter((item, index) => {
         if(item.date1.indexOf(simTransactionDate) >= 0) return true;
     })
     transactionsGroupedByDate2.push(dailySalesTransactions2)
@@ -234,7 +236,7 @@ const dailyInventoryBreakDown = (results) => {
     }
     // 累積値 \\
     for (let i = 0; i < inventoryDaily.length; i++){
-        inventoryDaily[i].unshift(results[1][i].qty)
+        inventoryDaily[i].unshift(results[2][i].qty)
     }
     
     for (let i = 1; i < dailyInventoryAFigure.length + 1; i++) {
@@ -262,10 +264,6 @@ const dailyInventoryBreakDown = (results) => {
     }
     dailyChart2(dailyChartLabel, dailyInventoryAAccum, dailyInventoryBAccum, dailyInventoryCAccum)
 }
-
-    // dailyChart1(dailyChartLabel, dailySalesFigureChartData)
-
-
 
 const monthlyBreakDown = (results) => {
     salesHist = results[0]
@@ -303,7 +301,6 @@ const monthlyBreakDown = (results) => {
     /// グラフ \\\
     dailyChart3(monthlySalesFigure)
     dailyChart4(monthlyGrossProfitFigure)
-    // dailyChart2(cashBalMoveLabel, inventoryA, inventoryB, inventoryC)
 }
 
 /// 売り上げ及び原価計算開始 \\\
@@ -363,33 +360,44 @@ newForm.addEventListener("submit", (e) => {
   });
 
   //////////Render Simulated Transactions\\\\\\\\\\\\\\\\
-// const renderSimTrans  = (simTrans) => {
-//     console.log(simTrans)
-//     for (tran of simTrans) {renderSimTran(tran)}
-//      ////work in progress \\\\\
-//      //// by using for(tran of salesSims), need to pass a simulated transaction to renderSimTrans to render 1 by 1 
-//  }
+const renderSimTrans  = (simTrans) => {
+    transactionList.innerHTML = ""
+    console.log(simTrans)
+    for (tran of simTrans) {renderSimTran(tran)}
+ }
  
- 
-//  const renderSimTran = (tran) => {
-//      console.log(tran)
-//      const div = document.createElement("div")
-//      div.id = tran.id
-//      const li = document.createElement("li")
- 
-//      const h3 = document.createElement("h3")
-//      // // h3.innerText = `${p.exchange.currency.slice(-3)}: ${p.local_amt.toLocaleString()}, which is equivalent to GBP: ${p.home_amt.toLocaleString()}`
-//      h3.innerText = `${tran.id}: test}`
-   
-//      const dBtn = document.createElement("button")
-//      dBtn.innerText = "Delete"
-//      dBtn.className = "button"
-//      // dBtn.addEventListener("click", (e) => {
-//      //     deleteAcc(h3,div)
-//      // // })
-//      h3.insertAdjacentElement("beforeend", dBtn)
-//      transactionList.appendChild(div)
-//  }
+ const renderSimTran = (tran) => {
+     console.log(tran)
+     const div = document.createElement("div")
+     div.id = tran.id
+     const li = document.createElement("li")
+     li.innerText = `${tran.date1}: Transaction Type - Sales, Quantity - ${tran.qtysold}, Amount - ${tran.valuesold}`
+     const dBtn = document.createElement("button")
+     dBtn.innerText = "Delete"
+     dBtn.className = "button"
+     dBtn.addEventListener("click", (e) => {
+         deleteTran(div, li)
+     })
+     div.append(li, dBtn)
+     transactionList.appendChild(div)
+ }
+
+ const deleteTran = (div, li) => {
+    //back-end
+    const id = div.id
+    console.log(id)
+    API.deleteSimTran(id)
+    //front-end
+    // li.parentNode.remove()
+    reRender()
+  }
+
+  const reRender = () => {
+    transactionList.innerHTML = ""
+    ctx1.parentNode.remove()
+    ctx2.parentNode.remove()
+    setTimeout("API.getInitialDailyData(SALESSIM_URL, CASH_URL, BICYCLE_URL).then(results => createSalesSimsData(results))", 500)
+  }
 
 /// チャート\\\
 const dailyChart3 = (monthlySalesFigure) => {
