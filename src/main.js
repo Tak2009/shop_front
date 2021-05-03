@@ -88,7 +88,6 @@ const dateDropDown = (() => {
 
 transMonth.addEventListener('change', e => {
     //   console.log(e.target.value)
-    //   transMonth.innerHTML = '';
       const updatedMonth = e.target.value;
     //   console.log(this_month)
       if (e.target.value == parseInt(this_month)){
@@ -167,7 +166,6 @@ const dailylyCashBreakDown = (results) => {
         dailySalesFigureChartData.push(sum)
         sum = 0
     }
-
     dailyChart1(dailyChartLabel, dailySalesFigureChartData)
 }
 
@@ -361,7 +359,13 @@ newForm.addEventListener("submit", (e) => {
 ///Render Simulated Transactions\\\
 const renderSimTrans  = (simTrans) => {
     transactionList.innerHTML = ""
-    // console.log(simTrans)
+    simTrans.sort((a, b) => {
+        if (a.date1 < b.date2) {
+            return -1
+        } else {
+            return 1
+        }
+    })
     for (tran of simTrans) {renderSimTran(tran)}
 }
  
