@@ -31,10 +31,8 @@ let dailySalesFigureChartData = []
 let cashBal
 let cashBalMove = []
 let cashBalMoveLabel = []
-
 let salesMonthlyDates = []
 let salesSimsMonthlyDates = []
-
 let simTransMove = []
 let simTransMoveLabel = []
 let simCashBal = []
@@ -78,28 +76,27 @@ const optionLoop = (start, end, id, this_day) => {
       }
     }
     return document.getElementById(id).innerHTML = opt;
-  };
+};
 
-// 即時関数 \\
+/// 即時関数 \\\
 const dateDropDown = (() => {
-    // 関数設定（スタート数字[必須]、終了数字[必須]、表示id名[省略可能]、デフォルト数字[省略可能]）
+    // 関数設定（スタート数字[必須]、終了数字[必須]、表示id名[省略可能]、デフォルト数字[省略可能]） \\
     optionLoop(this_year, this_year, 'id-year', this_year);
     optionLoop(this_month, 12, 'id-month', this_month);
     optionLoop(this_day, daysOf2021[this_month - 1], 'id-day', this_day)
-  })();
+})();
 
-  transMonth.addEventListener('change', e => {
-      console.log(e.target.value)
+transMonth.addEventListener('change', e => {
+    //   console.log(e.target.value)
     //   transMonth.innerHTML = '';
       const updatedMonth = e.target.value;
-      console.log(e.target.value)
-      console.log(this_month)
+    //   console.log(this_month)
       if (e.target.value == parseInt(this_month)){
         optionLoop(this_day, daysOf2021[updatedMonth - 1], 'id-day', this_day)
       } else {
         optionLoop(1, daysOf2021[updatedMonth - 1], 'id-day', this_day)
       }
-  })
+})
 
 // const dateFormat = (date) => {
 //     const year = date.slice(0,4)
@@ -148,13 +145,13 @@ const dailylyCashBreakDown = (results) => {
         if(item.date1.indexOf(simTransactionDate) >= 0) return true;
     })
     transactionsGroupedByDate.push(dailySalesTransactions)
-    console.log(transactionsGroupedByDate)
+    // console.log(transactionsGroupedByDate)
     });
     // 日次合計 \\
     for (const date of transactionsGroupedByDate) {
         let sum = 0
         for (let i = 0; i < date.length; i++) {
-            console.log(date[i].valuesold)
+            // console.log(date[i].valuesold)
             sum += date[i].valuesold
         }
         dailySalesFigure.push(sum)
@@ -202,13 +199,13 @@ const dailyInventoryBreakDown = (results) => {
         if(item.date1.indexOf(simTransactionDate) >= 0) return true;
     })
     transactionsGroupedByDate2.push(dailySalesTransactions2)
-    console.log(transactionsGroupedByDate2)
+    // console.log(transactionsGroupedByDate2)
     });
     // 日次合計 \\
     for (const date of transactionsGroupedByDate2) {
         let sumA = 0, sumB = 0, sumC = 0
         for (let i = 0; i < date.length; i++) {
-            console.log(date[i].valuesold)
+            // console.log(date[i].valuesold)
             if (date[i].bicycle_id === 1) {
                 sumA -= date[i].qtysold
                 sumB = 0
@@ -233,8 +230,12 @@ const dailyInventoryBreakDown = (results) => {
         sumC = 0
     }
     // 累積値 \\
+    inventoryDaily = [dailyInventoryAFigure, dailyInventoryBFigure, dailyInventoryCFigure] // 再Render時に必要
+    console.log(inventoryDaily)
     for (let i = 0; i < inventoryDaily.length; i++){
+        console.log(inventoryDaily)
         inventoryDaily[i].unshift(results[2][i].qty)
+        console.log(inventoryDaily)
     }
     
     for (let i = 1; i < dailyInventoryAFigure.length + 1; i++) {
@@ -290,7 +291,7 @@ const monthlyBreakDown = (results) => {
             if(item.date1.indexOf(transactionDate) >= 0) return true;
         })
         transactionsGroupedByMonth.push(monthlySalesTransactions)
-        console.log(transactionsGroupedByMonth)
+        // console.log(transactionsGroupedByMonth)
     });
     /// 売り上げ及び原価計算 \\\
     calcMonthlySalesVolumeAndCOGS(transactionsGroupedByMonth)
@@ -311,10 +312,10 @@ const calcMonthlySalesVolumeAndCOGS = (transactionsGroupedByMonth) => {
 
 /// 売り上げ計算開始 \\\
 const sumAllTransactionValue = (month) => {
-    console.log(month)
+    // console.log(month)
     let sum = 0
     for (let i = 0; i < month.length; i++) {
-        console.log(month[i].valuesold)
+        // console.log(month[i].valuesold)
         sum += month[i].valuesold
     }
     monthlySalesFigure.push(sum)
@@ -322,10 +323,10 @@ const sumAllTransactionValue = (month) => {
 
 /// 原価計算開始 \\\
 const sumAllTransactionCost = (month) => {
-    console.log(month)
+    // console.log(month)
     let sum = 0
     for (let i = 0; i < month.length; i++) {
-        console.log(month[i].costsold)
+        // console.log(month[i].costsold)
         sum += month[i].costsold
     }
     monthlyCOGSFigure.push(sum)
@@ -357,15 +358,15 @@ newForm.addEventListener("submit", (e) => {
         // API.getData(SALESSIM_URL).then((json) => renderSimTrans(json))
   });
 
-  //////////Render Simulated Transactions\\\\\\\\\\\\\\\\
+///Render Simulated Transactions\\\
 const renderSimTrans  = (simTrans) => {
     transactionList.innerHTML = ""
-    console.log(simTrans)
+    // console.log(simTrans)
     for (tran of simTrans) {renderSimTran(tran)}
- }
+}
  
- const renderSimTran = (tran) => {
-     console.log(tran)
+const renderSimTran = (tran) => {
+    //  console.log(tran)
      const div = document.createElement("div")
      div.id = tran.id
      const li = document.createElement("li")
@@ -378,31 +379,50 @@ const renderSimTrans  = (simTrans) => {
      })
      div.append(li, dBtn)
      transactionList.appendChild(div)
- }
+}
 
- const deleteTran = (div, li) => {
-    //back-end
+const deleteTran = (div, li) => {
+    // back-end \\
     const id = div.id
-    console.log(id)
     API.deleteSimTran(id)
-    //front-end
+    // front-end \\
     // li.parentNode.remove()
     reRender()
-  }
+}
 
-  const reRender = () => {
+const reRender = () => {
     transactionList.innerHTML = ""
     myDailyChart1.destroy()
     myDailyChart2.destroy()
-    // myDailyChart3.remove()
-    // myDailyChart4.remove()
-    // ctx4.parentNode.remove()
-    setTimeout("API.getInitialDailyData(SALESSIM_URL, CASH_URL, BICYCLE_URL).then(results => createSalesSimsData(results))", 500)
-  }
-
-  let myDailyChart1, myDailyChart2, myDailyChart3, myDailyChart4
+    // daily cash\\
+    dailyChartLabel = []
+    dailySalesFigure = []
+    dailySalesFigureChartData = []
+    salesSimsDates = []
+    transactionsGroupedByDate = []
+    // daily inventory\\
+    dailyChartLabel2 = []
+    salesSimsDates2 = []
+    inventoryDaily[0] = []
+    inventoryDaily[1] = []
+    inventoryDaily[2] = []
+    transactionsGroupedByDate2 = []
+    dailyInventoryAFigure = []
+    dailyInventoryBFigure = []
+    dailyInventoryCFigure = []
+    dailyInventoryAAccum = []
+    dailyInventoryBAccum = []
+    dailyInventoryCAccum = []
+    // dailyInventoryChartData = []
+    // ctx1.parentNode.remove()
+    // ctx2.parentNode.remove()
+    // setTimeout("API.getInitialDailyData(SALESSIM_URL, CASH_URL, BICYCLE_URL).then(results => createSalesSimsData(results))", 500)
+    API.getInitialDailyData(SALESSIM_URL, CASH_URL, BICYCLE_URL).then(results => createSalesSimsData(results))
+}
 
 /// チャート\\\
+let myDailyChart1, myDailyChart2, myDailyChart3, myDailyChart4 // 再レンダー時に使う
+
 const dailyChart3 = (monthlySalesFigure) => {
     myDailyChart3 = new Chart(ctx3, {
         type: 'bar',

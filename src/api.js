@@ -36,13 +36,6 @@ const getInitialMonthlyData = async (url, url2, url3) => {
     return results
 }
 
-const getData = async (url) => { 
-    const resp = await get(url)
-    const json = await resp.json()
-    await console.log(json)
-    return json
-}
-
 const getSales = () => {
     return fetch(SALES_URL)
     .then(resp => resp.json())
@@ -60,11 +53,6 @@ const getCash = () => {
 
 const getSalesSims = () => {
     return fetch(SALESSIM_URL)
-    .then(resp => resp.json())
-};
-
-const getSims = (url) => {
-    return fetch(url)
     .then(resp => resp.json())
 };
 
@@ -112,4 +100,4 @@ const deleteSimTran = (id) => {
 };
 
 
-API = {getSales, getBicycle, createNewTrans, getSalesSims, getSims, getCash, getInitialDailyData, getData, getInitialMonthlyData, deleteSimTran};
+API = {getSales, getBicycle, createNewTrans, getSalesSims, getCash, getInitialDailyData, getInitialMonthlyData, deleteSimTran};
