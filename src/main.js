@@ -361,9 +361,9 @@ const renderSimTrans  = (simTrans) => {
     transactionList.innerHTML = ""
     simTrans.sort((a, b) => {
         if (a.date1 < b.date2) {
-            return -1
-        } else {
             return 1
+        } else {
+            return -1
         }
     })
     for (tran of simTrans) {renderSimTran(tran)}
@@ -390,7 +390,7 @@ const deleteTran = (div, li) => {
     const id = div.id
     API.deleteSimTran(id)
     // front-end \\
-    // li.parentNode.remove()
+    li.parentNode.remove()
     reRender()
 }
 
@@ -420,8 +420,8 @@ const reRender = () => {
     // dailyInventoryChartData = []
     // ctx1.parentNode.remove()
     // ctx2.parentNode.remove()
-    // setTimeout("API.getInitialDailyData(SALESSIM_URL, CASH_URL, BICYCLE_URL).then(results => createSalesSimsData(results))", 500)
-    API.getInitialDailyData(SALESSIM_URL, CASH_URL, BICYCLE_URL).then(results => createSalesSimsData(results))
+    setTimeout("API.getInitialDailyData(SALESSIM_URL, CASH_URL, BICYCLE_URL).then(results => createSalesSimsData(results))", 500)
+    // API.getInitialDailyData(SALESSIM_URL, CASH_URL, BICYCLE_URL).then(results => createSalesSimsData(results))
 }
 
 /// チャート\\\
